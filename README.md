@@ -2,11 +2,11 @@
 A Simple App built in Jetpack Compose that shows some of its basics
 
 ## Features
-#### Material Design
+#### 1. Material Design
 ##### shape, color, typography
-#### Compose Layouts
+#### 2. Compose Layouts
 ##### LazyColumn, Row, Column
-#### Lists and Animations, state
+#### 3. Lists and Animations, state
 ## Documentation
   https://developer.android.com/jetpack/compose/tutorial
 ## ScreenShots
