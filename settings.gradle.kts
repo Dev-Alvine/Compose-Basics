@@ -17,3 +17,4 @@ rootProject.name = "ComposeBasics"
 include(":app")
 include(":composecodelab")
 include(":app:composecodelab")
+include(":app:composenavigation")
