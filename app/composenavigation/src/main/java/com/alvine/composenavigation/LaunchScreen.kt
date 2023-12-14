@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alvine.composenavigation.ui.theme.Gold
 
 @Composable
 fun LaunchScreen() {
@@ -40,7 +41,7 @@ fun LaunchScreen() {
                 .drawBehind {
                     val path = Path()
                     val x = size.width
-                    val y = size.height
+//                    val y = size.height
                     val center = size.center
                     path.apply {
                         moveTo(0f, 0f)
@@ -54,7 +55,7 @@ fun LaunchScreen() {
                             y3 = center.y
                         )
                     }
-                    drawPath(path = path, color = Color.Green)
+                    drawPath(path = path, color = Gold)
                 }
         ) {
             Column(
@@ -71,19 +72,21 @@ fun LaunchScreen() {
                 Text(
                     text = "Welcome to Compose Basics",
                     fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.size(16.dp))
-                Image(
-                    imageVector = Icons.Default.Face,
-                    contentDescription = null,
-                    modifier = Modifier.size(34.dp)
-                )
+              Image(
+                  painter = painterResource(id = R.drawable.android),
+                  contentDescription = null,
+                  modifier = Modifier.size(34.dp)
+              )
             }
+
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(20.dp)
                     .wrapContentSize(align = Alignment.BottomCenter)
             ) {
