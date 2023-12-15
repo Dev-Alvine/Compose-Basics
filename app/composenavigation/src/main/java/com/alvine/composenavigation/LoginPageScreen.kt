@@ -1,4 +1,4 @@
-package com.alvine.composenavigation.ui
+package com.alvine.composenavigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -80,7 +81,8 @@ fun LoginPage() {
             )
             Spacer(modifier = Modifier.size(16.dp))
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .weight(1f),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -92,7 +94,10 @@ fun LoginPage() {
                     Text(text = "Remember me")
                 }
                 Spacer(modifier = Modifier.width(2.dp))
-                TextButton(onClick = { /*TODO*/ }) {
+                TextButton(onClick = { /*TODO*/ },
+                    modifier=Modifier,
+                    colors = ButtonDefaults.buttonColors()
+                    ) {
                     Text(text = "Forgot Password")
                 }
             }
@@ -109,12 +114,14 @@ fun LoginPage() {
             Row (
                 modifier= Modifier
                     .fillMaxWidth()
+                    .padding(16.dp)
                     .wrapContentSize(align = Alignment.BottomCenter),
                 verticalAlignment = Alignment.CenterVertically
             ){
              Text(text = "Don't Have an Account")
                     Spacer(modifier = Modifier.width(4.dp))
                 TextButton(onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors()
                     ) {
                     Text(text = "Sign UP")
                 }
