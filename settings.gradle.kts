@@ -15,6 +15,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "ComposeBasics"
 include(":app")
-include(":composecodelab")
+include(":tabstesting")
 include(":app:composecodelab")
 include(":app:composenavigation")
