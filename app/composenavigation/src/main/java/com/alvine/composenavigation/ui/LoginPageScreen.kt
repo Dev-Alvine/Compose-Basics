@@ -1,4 +1,4 @@
-package com.alvine.composenavigation
+package com.alvine.composenavigation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

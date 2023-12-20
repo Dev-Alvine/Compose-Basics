@@ -1,4 +1,4 @@
-package com.alvine.composenavigation
+package com.alvine.composenavigation.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alvine.composenavigation.SignUpState
 
 @Composable
 fun SignUpScreen() {
-    val signUpState=SignUpState()
+    val signUpState= SignUpState()
     Surface (
         color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onSurface
@@ -68,7 +69,9 @@ fun SignUpScreen() {
             value = signUpState.emailAddress,
             onValueChange = { signUpState.emailChange(it) },
             shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             label = { Text(text = "email")},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
@@ -77,7 +80,8 @@ fun SignUpScreen() {
             onValueChange = { signUpState.passwordChange(it) },
             shape = MaterialTheme.shapes.medium,
             label = { Text(text = "password")},
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp)
+                .fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
@@ -86,7 +90,8 @@ fun SignUpScreen() {
             onValueChange = { signUpState.confirmPasswordChange(it) },
             shape = MaterialTheme.shapes.medium,
             label = { Text(text = "confirm password")},
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp)
+                .fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
@@ -123,7 +128,7 @@ fun SignUpScreen() {
                   text = "Sign In", modifier = Modifier.clickable {
 
               },
-                  color = MaterialTheme.colorScheme.primary
+                  color = MaterialTheme.colorScheme.onSurface
               )
           }
     }

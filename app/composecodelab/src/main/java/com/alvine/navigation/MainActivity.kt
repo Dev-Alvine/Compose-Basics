@@ -1,4 +1,4 @@
-package com.alvine.tabtesting
+package com.alvine.navigation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,7 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alvine.tabtesting.ui.theme.ComposeBasicsTheme
+import com.alvine.composecodelab.R
+import com.alvine.navigation.ui.theme.ComposeBasicsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +52,8 @@ class MainActivity : ComponentActivity() {
             ComposeBasicsTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    ) {
-                   SimpleApp(modifier = Modifier.fillMaxSize())
+                ) {
+                    SimpleApp(modifier = Modifier.fillMaxSize())
                 }
             }
         }
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SimpleApp(
-    modifier: Modifier= Modifier
+    modifier: Modifier = Modifier
 ) {
     var showOnLaunch by rememberSaveable {
         mutableStateOf(true)
@@ -70,10 +71,9 @@ fun SimpleApp(
         modifier,
         color = MaterialTheme.colorScheme.background
     ) {
-        if (showOnLaunch){
-            LaunchScreen(onContinueClicked = {showOnLaunch=false})
-        }else
-        {
+        if (showOnLaunch) {
+            LaunchScreen(onContinueClicked = { showOnLaunch = false })
+        } else {
             Greetings()
         }
     }
@@ -81,36 +81,37 @@ fun SimpleApp(
 
 @Composable
 fun LaunchScreen(
-    onContinueClicked: () ->Unit,
-    modifier: Modifier=Modifier,
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier=modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Welcome to Basics CodeLab")
-        Button(modifier=modifier.padding(vertical = 24.dp),
+        Button(
+            modifier = modifier.padding(vertical = 24.dp),
             onClick = onContinueClicked
         ) {
-              Text(
-                  text = "Continue ",
-                  style = MaterialTheme.typography.bodyMedium,
-                  fontWeight = FontWeight.Bold
-              )
+            Text(
+                text = "Continue ",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
 
 @Composable
 private fun Greetings(
-    modifier: Modifier=Modifier,
-    names:List<String> = List(500){"$it"}
+    modifier: Modifier = Modifier,
+    names: List<String> = List(500) { "$it" }
 ) {
     LazyColumn(
-        modifier=modifier.padding(vertical = 4.dp)
-    ){
-        items(items =names){ name ->
+        modifier = modifier.padding(vertical = 4.dp)
+    ) {
+        items(items = names) { name ->
             Greeting(name = name)
 
         }
@@ -125,20 +126,20 @@ fun Greeting(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
-        modifier= Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         CardContent(name)
     }
 }
 
 @Composable
-private fun CardContent (
+private fun CardContent(
     name: String
 ) {
-    var expanded by remember{
+    var expanded by remember {
         mutableStateOf(false)
     }
-    Row (
+    Row(
         modifier = Modifier
             .padding(12.dp)
             .animateContentSize(
@@ -147,35 +148,38 @@ private fun CardContent (
                     stiffness = Spring.StiffnessLow
                 )
             )
-    ){
+    ) {
         Column(
-            modifier= Modifier
+            modifier = Modifier
                 .weight(1f)
                 .padding(12.dp)
         ) {
             Text(text = "Hello, ")
-            Text(text = name, style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.ExtraBold
+            Text(
+                text = name, style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                )
             )
-            )
-            if(expanded){
-                Text(text = ("This codelab covers the following:\r\n" +
-                             "The art of reusing Composables\r\n"+
-                             "State and State Hoisting\r\n" +
-                            "List Animation\r\n"  +
+            if (expanded) {
+                Text(
+                    text = ("This codelab covers the following:\r\n" +
+                            "The art of reusing Composables\r\n" +
+                            "State and State Hoisting\r\n" +
+                            "List Animation\r\n" +
                             "Layout and Styling"
-                        ))
+                            )
+                )
             }
 
         }
         IconButton(
-            onClick = { expanded=!expanded }
+            onClick = { expanded = !expanded }
         ) {
             Icon(
                 imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                contentDescription = if (expanded){
+                contentDescription = if (expanded) {
                     stringResource(R.string.show_less)
-                }else{
+                } else {
                     stringResource(R.string.show_more)
                 }
             )
@@ -186,40 +190,41 @@ private fun CardContent (
 @Composable
 fun TextFieldHolder() {
     var (name, onValueChange) = remember {
-       mutableStateOf("")
+        mutableStateOf("")
     }
-    Row (
+    Row(
         modifier = Modifier.fillMaxSize()
-    ){
-        Row (modifier = Modifier.padding(4.dp)){
-           Row (
-               modifier = Modifier.weight(1f),
-              horizontalArrangement = Arrangement.SpaceBetween,
-               verticalAlignment = Alignment.CenterVertically
-           ){
-               OutlinedTextField(
-                   value = name,
-                   shape = MaterialTheme.shapes.medium,
-                   onValueChange = onValueChange,
-                   label = {
-                       Text(text = "+254", textAlign = TextAlign.Start)
-                   },
-               )
-               Spacer(modifier = Modifier.width(2.dp))
-               IconButton(onClick = { /*TODO*/ }) {
-                   Icon(
-                       imageVector = Icons.Default.KeyboardArrowDown,
-                       contentDescription = null,
-                       tint = Color.White,
-                       modifier = Modifier
-                   )
-               }
-           }
+    ) {
+        Row(modifier = Modifier.padding(4.dp)) {
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    shape = MaterialTheme.shapes.medium,
+                    onValueChange = onValueChange,
+                    label = {
+                        Text(text = "+254", textAlign = TextAlign.Start)
+                    },
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                    )
+                }
+            }
             Spacer(modifier = Modifier.size(4.dp))
-            OutlinedTextField(value = name, onValueChange =onValueChange ,
+            OutlinedTextField(
+                value = name, onValueChange = onValueChange,
                 modifier = Modifier.weight(2f),
                 shape = MaterialTheme.shapes.medium
-                )
+            )
         }
 
     }

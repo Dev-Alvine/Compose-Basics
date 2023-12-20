@@ -1,4 +1,4 @@
-package com.alvine.tabtesting.ui.theme
+package com.alvine.navigation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
