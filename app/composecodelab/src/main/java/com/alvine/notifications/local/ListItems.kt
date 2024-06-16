@@ -6,7 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
+<<<<<<< HEAD
 import com.alvine.composecodelab.R
+=======
+>>>>>>> origin/main
 
 @Composable
 fun ListItems(
@@ -16,7 +19,11 @@ fun ListItems(
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
         items(items = data.toMutableList()) { n ->
             ComposeCard(
+<<<<<<< HEAD
                 name =ComposeRandomItem.name,
+=======
+                name = n.name,
+>>>>>>> origin/main
                 type = n.type,
                 description = n.description
             )
