@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -43,11 +44,12 @@ fun ImageContent(
     ){
         Image(
             modifier = Modifier
+                .padding(4.dp)
                 .height(120.dp)
                 .width(180.dp),
             painter = painterResource(id = photos.image),
             contentDescription = "Mountain Images",
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillBounds
         )
     }
 }
