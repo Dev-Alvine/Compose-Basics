@@ -3,19 +3,27 @@ package com.alvine.gestures
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,28 +35,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
+import androidx.compose.ui.unit.toIntRect
 import coil.compose.rememberAsyncImagePainter
 import com.alvine.composecodelab.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 
 @Composable
 fun App(
     photos:List<Photo>
 ) {
-    var activeId by rememberSaveable {
-        mutableStateOf<Int?>(null)
-    }
+    var activeId by rememberSaveable { mutableStateOf<Int?>(null) }
     val gridState= rememberLazyGridState()
-    var autoScrollSpeed by remember {
-        mutableStateOf(0f)
-    }
+    var autoScrollSpeed by remember { mutableStateOf(0f) }
     val scrim= remember(activeId){FocusRequester()}
 
     PhotoGrid(
@@ -61,9 +73,23 @@ fun App(
     if (activeId!=null){
         FullScreenPhoto(
             photo= photos.first{it.id==activeId},
-            onDismiss={activeId=null }
+            onDismiss={activeId=null },
+            modifier=Modifier.focusRequester(scrim)
+
         )
+        LaunchedEffect(activeId){
+            scrim.requestFocus()
+        }
     }
+
+        LaunchedEffect(autoScrollSpeed) {
+            if (autoScrollSpeed !=0f){
+                while (isActive){
+                    gridState.scrollBy(autoScrollSpeed)
+                    delay(10)
+                }
+            }
+        }
 }
 
 @Composable
@@ -143,6 +169,9 @@ private fun PhotoImage(
 @Composable
 private fun PhotoGrid(
     photos:List<Photo>,
+    state:LazyGridState,
+    modifier:Modifier=Modifier,
+    setAutoScrollSpeed:(Float)->Unit={},
     navigateToPhoto:(Int) ->Unit={}
 ) {
     var selectedIds by rememberSaveable {
@@ -151,23 +180,99 @@ private fun PhotoGrid(
     val inSelectionMode by remember {
         derivedStateOf { selectedIds.isNotEmpty() }
     }
-    LazyVerticalGrid(GridCells.Adaptive(128.dp)) {
+    LazyVerticalGrid(
+        state=state,
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        modifier = modifier.photoGridDragHandler(
+            lazyGridState= state,
+            selectedIds={selectedIds},
+            setSelectedIds={selectedIds=it},
+            setAutoScrollSpeed=setAutoScrollSpeed,
+            autoScrollThreshold= with(LocalDensity.current){40.dp.toPx()}
+        ),
+        columns = GridCells.Adaptive(128.dp)
+    ) {
         items(photos, key = {it.id!!}){photo->
 
-            val selected by remember {
-                derivedStateOf { photo.id in selectedIds }
-            }
+            val selected by remember { derivedStateOf { selectedIds.contains(photo.id) } }
 
             PhotoItem(
-                selected,inSelectionMode,
-                Modifier.combinedClickable(
-                    onClick = {navigateToPhoto(photo.id)},
-                    onLongClick = {selectedIds +=photo.id}
-                )
+                photo, selected,inSelectionMode,
+                Modifier
+                    .semantics {
+                        if (!inSelectionMode) {
+                            onLongClick("select") {
+                                selectedIds += photo.id
+                                true
+                            }
+                        }
+                    }
+                    .then(if (inSelectionMode) {
+                        Modidfier.toggleable(
+                            value = selected,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null, //do not show a ripple
+                            onValueChange = {
+                                if (it){
+                                    selectedIds+=photo.id
+                                }else{
+                                    selectedIds-=photo.id
+                                }
+                            }
+                        )
+                    }else{
+//                        Modifier.clickable{navigateToPhoto(photo.id)}
+                        Modifier.combinedClickable(
+                            onClick = { navigateToPhoto(photo.id) },
+                            onLongClick = { selectedIds += photo.id }
+                        )
+                    })
+
             )
         }
     }
 }
+
+
+fun Modifier.photoGridDragHandler(
+    lazyGridState: LazyGridState,
+    selectedIds:()->Set<Int>,
+    autoScrollThreshold:Float,
+    setSelectedIds:(Set<Int>)->Unit={},
+    setAutoScrollSpeed: (Float) -> Unit={}
+)=pointerInput(
+    autoScrollThreshold,
+    setSelectedIds,
+    setAutoScrollSpeed
+){
+     fun photoIdAtOffset(hitPoint:Offset):Int?=
+         lazyGridState.layoutInfo.visibleItemsInfo.find { itemInfo->
+             itemInfo.size.toIntRect().contains(hitPoint.round()-itemInfo.offset)
+         }?.key as? Int
+
+    var initialPhotoId:Int?=null
+    var currentPhotoId:Int?=null
+    detectDragGesturesAfterLongPress(
+        onDragStart={offset->
+            photoIdAtOffset(offset)?.let { key->
+                if (!selectedIds().contains(key)){
+                    initialPhotoId=key
+                    currentPhotoId=key
+                    setSelectedIds(selectedIds()+key)
+                }
+            }
+        }
+    ) {
+
+    }
+}
+
+
+
+
+
+
 
 @Composable
 fun PhotoItem(selected: Boolean, inSelectionMode: Boolean, combinedClickable: Modifier) {
