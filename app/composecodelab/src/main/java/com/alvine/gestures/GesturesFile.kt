@@ -297,91 +297,13 @@ class Photo(
     val description:String
 )
 
-//
-//data class Photos(
-//    val id:Int?=null,
-//    @DrawableRes val image:Int
-//)
-//
-//val images= listOf(
-//    Photos(
-//        image = R.drawable.one
-//    ),
-//      Photos(
-//        image = R.drawable.two
-//    ),
-//      Photos(
-//        image = R.drawable.three
-//    ),
-//      Photos(
-//        image = R.drawable.four
-//    ),
-//      Photos(
-//        image = R.drawable.five
-//    ),
-//      Photos(
-//        image = R.drawable.six
-//    ),
-//      Photos(
-//        image = R.drawable.seven
-//    ),
-//      Photos(
-//        image = R.drawable.eight
-//    ),
-//      Photos(
-//        image = R.drawable.nine
-//    ),
-//      Photos(
-//        image = R.drawable.ten
-//    ),
-//      Photos(
-//        image = R.drawable.eleven
-//    ),
-//      Photos(
-//        image = R.drawable.twelve
-//    ),
-//      Photos(
-//        image = R.drawable.thirteen
-//    ),
-//      Photos(
-//        image = R.drawable.fourteen
-//    ),
-//      Photos(
-//        image = R.drawable.fifteen
-//    ),
-//    Photos(
-//        image = R.drawable.five
-//    ),
-//    Photos(
-//        image = R.drawable.six
-//    ),
-//    Photos(
-//        image = R.drawable.seven
-//    ),
-//    Photos(
-//        image = R.drawable.eight
-//    ),
-//    Photos(
-//        image = R.drawable.nine
-//    ),
-//    Photos(
-//        image = R.drawable.ten
-//    ),
-//    Photos(
-//        image = R.drawable.eleven
-//    ),
-//    Photos(
-//        image = R.drawable.twelve
-//    ),
-//    Photos(
-//        image = R.drawable.thirteen
-//    ),
-//    Photos(
-//        image = R.drawable.fourteen
-//    ),
-//    Photos(
-//        image = R.drawable.fifteen
-//    ),)
+
+
+
+
+
+
+
 
 
 
