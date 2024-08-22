@@ -1,5 +1,6 @@
 package com.alvine.gestures
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -238,6 +239,7 @@ private fun PhotoGrid(
 }
 
 
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 fun Modifier.photoGridDragHandler(
     lazyGridState: LazyGridState,
     selectedIds:()->Set<Int>,
@@ -293,7 +295,21 @@ fun Modifier.photoGridDragHandler(
     )
 }
 
-
+private fun Set<Int>.addOrRemoveUpTo(
+    pointerKey: Int?,
+    previousPointerKey: Int?,
+    initialKey: Int?
+    ): Set<Int> {
+    return if (pointerKey == null || previousPointerKey == null || initialKey == null) {
+        this
+        } else {
+         this
+        .minus(initialKey..previousPointerKey)
+        .minus(previousPointerKey..initialKey)
+        .plus(initialKey..pointerKey)
+        .plus(pointerKey..initialKey)
+        }
+    }
 
 
 @Composable
