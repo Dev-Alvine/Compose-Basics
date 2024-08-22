@@ -269,11 +269,6 @@ fun Modifier.photoGridDragHandler(
 }
 
 
-
-
-
-
-
 @Composable
 fun PhotoItem(selected: Boolean, inSelectionMode: Boolean, combinedClickable: Modifier) {
     if (inSelectionMode){
