@@ -182,6 +182,7 @@ private fun PhotoGrid(
     }
     LazyVerticalGrid(
         state=state,
+        columns = GridCells.Adaptive(128.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
         modifier = modifier.photoGridDragHandler(
@@ -191,11 +192,13 @@ private fun PhotoGrid(
             setAutoScrollSpeed=setAutoScrollSpeed,
             autoScrollThreshold= with(LocalDensity.current){40.dp.toPx()}
         ),
-        columns = GridCells.Adaptive(128.dp)
+
     ) {
         items(photos, key = {it.id!!}){photo->
 
-            val selected by remember { derivedStateOf { selectedIds.contains(photo.id) } }
+            val selected by remember {
+                derivedStateOf { selectedIds.contains(photo.id) }
+            }
 
             PhotoItem(
                 photo, selected,inSelectionMode,
@@ -262,11 +265,35 @@ fun Modifier.photoGridDragHandler(
                     setSelectedIds(selectedIds()+key)
                 }
             }
+        },
+        onDragCancel = {setAutoScrollSpeed(0f); initialPhotoId=null},
+        onDragEnd = {setAutoScrollSpeed(0f);initialPhotoId=null},
+        onDrag = {change, _ ->
+            if(initialPhotoId!=null){
+                val distFromBottom=
+                    lazyGridState.layoutInfo.viewportSize.height- change.position.y
+                val distFromTop= change.position.y
+                setAutoScrollSpeed(
+                    when{
+                        distFromBottom<autoScrollThreshold->autoScrollThreshold-distFromBottom
+                        distFromTop<autoScrollThreshold->-(autoScrollThreshold-distFromTop)
+                        else ->0f
+                    }
+                )
+                photoIdAtOffset(change.position)?.let { pointerPhotoId->
+                    if (currentPhotoId!=pointerPhotoId){
+                        setSelectedIds(
+                            selectedIds().addOrRemoveUpTo(pointerPhotoId,currentPhotoId,initialPhotoId)
+                        )
+                        currentPhotoId=pointerPhotoId
+                    }
+                }
+            }
         }
-    ) {
-
-    }
+    )
 }
+
+
 
 
 @Composable
