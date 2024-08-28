@@ -179,74 +179,72 @@ private fun PhotoImage(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PhotoGrid(
-    photos:List<Photo>,
-    state:LazyGridState,
-    modifier:Modifier=Modifier,
-    setAutoScrollSpeed:(Float)->Unit={},
-    navigateToPhoto:(Int) ->Unit={}
-) {
-    var selectedIds by rememberSaveable {
-        mutableStateOf(emptyList<Int>())
-    }
-    val inSelectionMode by remember {
-        derivedStateOf { selectedIds.isNotEmpty() }
-    }
-    LazyVerticalGrid(
-        state=state,
-        columns = GridCells.Adaptive(128.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
-        modifier = modifier.photoGridDragHandler(
-            lazyGridState= state,
-            selectedIds={selectedIds},
-            setSelectedIds={selectedIds=it},
-            setAutoScrollSpeed=setAutoScrollSpeed,
-            autoScrollThreshold= with(LocalDensity.current){40.dp.toPx()}
-        ),
-
+     photos: List<Photo>,
+     state: LazyGridState,
+     modifier: Modifier = Modifier,
+     setAutoScrollSpeed: (Float) -> Unit = { },
+    navigateToPhoto: (Int) -> Unit = { }
     ) {
-        items(photos, key = {it.id!!}){photo->
+    var selectedIds by rememberSaveable { mutableStateOf(emptySet<Int>()) }
+     val inSelectionMode by remember { derivedStateOf { selectedIds.isNotEmpty() } }
 
-            val selected by remember {
-                derivedStateOf { selectedIds.contains(photo.id) }
-            }
-
-            PhotoItem(
-                photo, selected,inSelectionMode,
-                Modifier
-                    .semantics {
-                        if (!inSelectionMode) {
-                            onLongClick("select") {
-                                selectedIds += photo.id
-                                true
-                            }
-                        }
+    LazyVerticalGrid(
+             state = state,
+    columns = GridCells.Adaptive(128.dp),
+     verticalArrangement = Arrangement.spacedBy(3.dp),
+     horizontalArrangement = Arrangement.spacedBy(3.dp),
+     modifier = modifier.photoGridDragHandler(
+             lazyGridState = state,
+    selectedIds = { selectedIds },
+     setSelectedIds = { selectedIds = it },
+    setAutoScrollSpeed = setAutoScrollSpeed,
+     autoScrollThreshold = with(LocalDensity.current) { 40.dp.toPx() }
+     )
+     ) {
+     items(photos, key = { it.id }) { photo ->
+     val selected by remember { derivedStateOf { selectedIds.contains(photo.id) } }
+        PhotoItem(
+                photo, inSelectionMode, selected,
+         Modifier
+                 .semantics {
+                 if (!inSelectionMode) {
+                    onLongClick("Select") {
+                        selectedIds += photo.id
+                               true
+                         }
                     }
-                    .then(if (inSelectionMode) {
-                        Modidfier.toggleable(
-                            value = selected,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null, //do not show a ripple
-                            onValueChange = {
-                                if (it) {
-                                    selectedIds += photo.id
-                                } else {
-                                    selectedIds -= photo.id
-                                }
-                            }
-                        )
-                    } else {
-//                        Modifier.clickable{navigateToPhoto(photo.id)}
-                        Modifier.combinedClickable(
-                            onClick = { navigateToPhoto(photo.id) },
-                            onLongClick = { selectedIds += photo.id }
-                        )
-                    })
+                     }
+         .then(if (inSelectionMode) {
+             Modifier.toggleable(
+                     value = selected,
+             interactionSource = remember { MutableInteractionSource() },
+             indication = null, // do not show a ripple
+             onValueChange = {
+                 if (it) {
+                 selectedIds += photo.id
+                         } else {
+                 selectedIds -= photo.id
+                         }
+                 }
+             )
+             } else {
+             // Modifier.clickable { navigateToPhoto(photo.id) }
+             Modifier.combinedClickable(
+                     onClick = { navigateToPhoto(photo.id) },
+             onLongClick = { selectedIds += photo.id }
+             )
+             })
+         )
+         }
+         }
+     }
 
-            )
-        }
-    }
-}
+
+
+
+
+
+
 
 
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
@@ -325,10 +323,10 @@ private fun Set<Int>.addOrRemoveUpTo(
 @Composable
 fun PhotoItem(
     photo:Photo,
-    modifier:Modifier=Modifier,
+    modifier: Modifier =Modifier,
     selected: Boolean,
     inSelectionMode: Boolean,
-    combinedClickable: Modifier) {
+    ) {
 
     Surface(
         modifier=modifier.aspectRatio(1f),
