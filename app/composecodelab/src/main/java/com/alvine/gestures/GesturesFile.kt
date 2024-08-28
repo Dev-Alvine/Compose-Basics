@@ -1,10 +1,12 @@
 package com.alvine.gestures
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -15,14 +17,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -33,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -218,14 +228,14 @@ private fun PhotoGrid(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null, //do not show a ripple
                             onValueChange = {
-                                if (it){
-                                    selectedIds+=photo.id
-                                }else{
-                                    selectedIds-=photo.id
+                                if (it) {
+                                    selectedIds += photo.id
+                                } else {
+                                    selectedIds -= photo.id
                                 }
                             }
                         )
-                    }else{
+                    } else {
 //                        Modifier.clickable{navigateToPhoto(photo.id)}
                         Modifier.combinedClickable(
                             onClick = { navigateToPhoto(photo.id) },
@@ -313,17 +323,60 @@ private fun Set<Int>.addOrRemoveUpTo(
 
 
 @Composable
-fun PhotoItem(selected: Boolean, inSelectionMode: Boolean, combinedClickable: Modifier) {
-    if (inSelectionMode){
-        if (selected){
-            Icons.Filled.CheckCircle
-        }else{
-            Image(
-                painter = painterResource(
-                     id = R.drawable.baseline_radio_button_unchecked_24),
-                contentDescription = ""
-            )
+fun PhotoItem(
+    photo:Photo,
+    modifier:Modifier=Modifier,
+    selected: Boolean,
+    inSelectionMode: Boolean,
+    combinedClickable: Modifier) {
+
+    Surface(
+        modifier=modifier.aspectRatio(1f),
+        tonalElevation = 3.dp
+    ) {
+    Box {
+        val transition= updateTransition(selected, label = "selected" )
+        val padding by transition.animateDp (
+            label="corner"
+            ){selected->
+            if (selected) 10.dp else 0.dp
+
         }
+        val roundedCornerShape by transition.animateDp (label = "corner"){selected->
+            if (selected)16.dp else 0.dp
+
+        }
+
+        Image(painter = rememberAsyncImagePainter(photo.url)
+            , contentDescription = null,
+            modifier= Modifier
+                .matchParentSize()
+                .padding(padding)
+                .clip(RoundedCornerShape(roundedCornerShape)))
+        if (inSelectionMode){
+            if(selected){
+                val bgColor= MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                Icon(
+                    Icons.Filled.CheckCircle,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null,
+                    modifier= Modifier
+                        .padding(4.dp)
+                        .border(2.dp, bgColor, CircleShape)
+                        .clip(CircleShape)
+                        .background(bgColor)
+                )
+            }else{
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_radio_button_unchecked_24),
+                    contentDescription = null,
+                    modifier = Modifier.padding(6.dp),
+//                    tint=Color.White.copy(alpha = 0.7f)
+                )
+            }
+        }
+    }
+
     }
 
 }
