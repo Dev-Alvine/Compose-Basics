@@ -2,4 +2,5 @@
     <string name="app_name">ComposeCodelab</string>
     <string name="show_less">Show Less</string>
     <string name="show_more">Show More</string>
+    <string name="close">close</string>
 </resources>
